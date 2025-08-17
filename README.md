@@ -273,6 +273,10 @@ npm run dev
 ```
 
 ### LLM Integration
+
+#### Creating LLM Wrapper Scripts
+The `zellij_create_llm_wrapper` tool generates intelligent wrapper scripts that provide robust completion detection for any LLM command:
+
 ```json
 {
   "name": "zellij_create_llm_wrapper",
@@ -284,6 +288,35 @@ npm run dev
   }
 }
 ```
+
+**What the wrapper provides:**
+- **Multi-signal detection**: Exit codes, completion markers, and status files
+- **Automatic timeout handling**: Configurable timeout with graceful cleanup
+- **Process monitoring**: Real-time status tracking and logging
+- **Signal handling**: Proper cleanup on interruption (SIGINT, SIGTERM)
+- **Timestamped logging**: Detailed execution logs for debugging
+
+**Generated files:**
+- `/tmp/llm-wrapper-{name}.sh` - The executable wrapper script
+- `/tmp/llm-status-{name}` - Real-time status file with timestamps
+- `/tmp/llm-output-{name}-{pid}` - Captured output (temporary)
+
+**Usage example:**
+```bash
+# After creating the wrapper, use it like:
+/tmp/llm-wrapper-claude-wrapper.sh "Explain quantum computing"
+
+# Monitor status in real-time:
+tail -f /tmp/llm-status-claude-wrapper
+
+# The wrapper handles timeouts, signals, and cleanup automatically
+```
+
+**Status tracking:**
+- `running` - LLM query is in progress
+- `complete:0` - Successfully completed
+- `timeout` - Query timed out
+- `error:N` - Failed with exit code N
 
 ## Architecture
 
@@ -339,9 +372,7 @@ npm start
 ```
 
 ### Testing
-The project includes test files for validating functionality:
-- `test-detection.js` - LLM detection system tests
-- `test-workflow.sh` - Workflow validation tests
+Run `./test-workflow.sh` to validate the detection system functionality.
 
 ## Contributing
 
